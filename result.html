@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMU-OGE 2025年春酒中獎名單</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            margin: 50px auto;
+            width: 80%;
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>TMU-OGE 2025年春酒中獎名單</h2>
+        <div id="winners-list"></div>
+        <button onclick="drawNextPrize()">抽取下一個獎項</button>
+    </div>
+    <script>
+        let prizes = JSON.parse(localStorage.getItem('prizes')) || [];
+        let names = JSON.parse(localStorage.getItem('names')) || [];
+        let winners = JSON.parse(localStorage.getItem('winners')) || [];
+        let currentPrizeIndex = winners.length;
+        
+        function drawNextPrize() {
+            if (currentPrizeIndex >= prizes.length) {
+                alert("所有獎項已抽取完畢！");
+                return;
+            }
+            
+            let availableNames = names.filter(n => !winners.some(w => w.name === n));
+            if (availableNames.length === 0) {
+                alert("沒有剩餘的參賽者！");
+                return;
+            }
+            
+            let winner = availableNames[Math.floor(Math.random() * availableNames.length)];
+            let prize = prizes[currentPrizeIndex];
+            winners.push({ prize: prize, name: winner });
+            localStorage.setItem('winners', JSON.stringify(winners));
+            
+            let winnersList = document.getElementById('winners-list');
+            winnersList.innerHTML += `<p>${prize}: ${winner}</p>`;
+            currentPrizeIndex++;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            let winnersList = document.getElementById('winners-list');
+            winnersList.innerHTML = "<h3>得獎名單</h3>" + winners.map(w => `<p>${w.prize}: ${w.name}</p>`).join("");
+        });
+    </script>
+</body>
+</html>
